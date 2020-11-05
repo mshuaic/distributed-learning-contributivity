@@ -725,3 +725,22 @@ class Esc50(Dataset):
     @staticmethod
     def train_test_split_global(data):
         return train_test_split(data, test_size=0.1, random_state=42)
+
+
+class HAM10000(Dataset):
+    def __init__(self):
+        # Load data
+        self.num_classes = 7
+        self.input_shape = (224, 224)
+
+#TODO: data loader
+        # (x_train, y_train), (x_test, y_test) = self.load_data()
+
+        super(HAM10000, self).__init__(dataset_name='esc50',
+                                       num_classes=self.num_classes,
+                                       input_shape=self.input_shape,
+                                       x_train=x_train,
+                                       y_train=y_train,
+                                       x_test=x_test,
+                                       y_test=y_test
+                                       )
