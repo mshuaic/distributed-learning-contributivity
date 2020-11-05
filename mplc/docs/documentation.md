@@ -456,6 +456,19 @@ For each partner, the local dataset will be split into separated train, validati
 These are not mandatory, by default the local dataset will not be split. 
 Denote that currently, the local validation and test set are not used, but they are available for further developments of multi-partner learning and contributivity measurement approaches.
 
+## [wip] Run tests
+
+```sh
+# Run unit tests
+python3 -m pytest -vv tests/unit_tests.py
+
+# Fall in debugger breakpoint in case of error
+python3 -m pytest -vv tests/unit_tests.py --pdb
+
+# Run a test coverage measure
+pytest -vv --cov=mplc tests/unit_tests.py
+```
+
 ## Contacts, contributions, collaborations
 
 Should you be interested in this open effort and would like to share any question, suggestion or input, you can use the following channels:
