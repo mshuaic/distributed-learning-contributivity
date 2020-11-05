@@ -41,7 +41,7 @@ class Scenario:
             minibatch_count=constants.DEFAULT_BATCH_COUNT,
             epoch_count=constants.DEFAULT_EPOCH_COUNT,
             is_early_stopping=True,
-            methods=None,
+            contributivity_methods=None,
             is_quick_demo=False,
             experiment_path=Path(r"./experiments"),
             scenario_id=1,
@@ -80,7 +80,7 @@ class Scenario:
         :param minibatch_count: int
         :param epoch_count: int
         :param is_early_stopping: boolean. Stop the training if scores on val_set reach a plateau
-        :param methods: A declarative list `[]` of the contributivity measurement methods to be executed.
+        :param contributivity_methods: A declarative list `[]` of the contributivity measurement methods to be executed.
         :param is_quick_demo: boolean. Useful for debugging
         :param experiment_path: path
         :param scenario_id: str
@@ -100,7 +100,7 @@ class Scenario:
             "dataset_proportion",
         ]  # Dataset related
         params_known += [
-            "methods",
+            "contributivity_methods",
             "multi_partner_learning_approach",
             "aggregation",
         ]  # federated learning related
@@ -268,11 +268,11 @@ class Scenario:
         self.contributivity_list = []
 
         # Contributivity methods
-        self.methods = []
-        if methods is not None:
-            for method in methods:
+        self.contributivity_methods = []
+        if contributivity_methods is not None:
+            for method in contributivity_methods:
                 if method in constants.CONTRIBUTIVITY_METHODS:
-                    self.methods.append(method)
+                    self.contributivity_methods.append(method)
                 else:
                     raise Exception(
                         f"Contributivity method '{method}' is not in methods list."
@@ -845,7 +845,7 @@ class Scenario:
         # Instantiate and run the contributivity measurement methods
         # ----------------------------------------------------------
 
-        for method in self.methods:
+        for method in self.contributivity_methods:
             logger.info(f"{method}")
             contrib = contributivity.Contributivity(scenario=self)
             contrib.compute_contributivity(method)
