@@ -29,7 +29,7 @@
 
 You need to install mplc. All the dependencies will be installed automatically. 
 
-```bash
+```sh
 $ pip install mplc
 ```
 
@@ -38,12 +38,11 @@ This installs the last packaged version on pypi.
 If you want to install mplc from the repository, make sure that you got the latest version of pip. 
 Then clone the repository, and trigger the installation using pip.
 
-```bash
+```sh
 $ git clone https://github.com/SubstraFoundation/distributed-learning-contributivity.git
 $ cd distributed-learning-contributivity
 $ pip install -e . 
 ```
-
 
 ## Quick start
 
@@ -87,6 +86,7 @@ my_scenario = Scenario(partners_count=3,
                        amounts_per_partner=[0.2, 0.3, 0.5],
                         dataset_name='mnist')
 ```
+
 With each dataset, a model is provided, so you do not need to care of it. Moreover, the split between the validation and train sets is done by the constructor's of the dataset, even if you can fine thune it.
 If you want to use an homemade dataset or a homemade model, you will have to use the [dataset class.](#dataset-generation)
 Note that this parameter is not mandatory as the MNIST dataset is selected by default. 
@@ -165,6 +165,7 @@ my_scenario = Scenario(partners_count=3,
                        minibatch_count=3,
                        methods=['Shapley values'])
 ```
+
 The result's access is straightforward
 
 ```python
