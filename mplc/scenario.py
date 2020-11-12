@@ -5,7 +5,6 @@ This enables to parameterize a desired scenario to mock a multi-partner ML proje
 
 import datetime
 import operator
-import os
 import random
 import uuid
 from pathlib import Path
@@ -46,7 +45,6 @@ class Scenario:
             experiment_path=Path(r"./experiments"),
             scenario_id=1,
             repeats_count=1,
-            is_dry_run=False,
             **kwargs,
     ):
         """
@@ -88,9 +86,9 @@ class Scenario:
         :param **kwargs:
         """
 
-    # ---------------------------------------------------------------------
-    # Initialization of the dataset defined in the config of the experiment
-    # ---------------------------------------------------------------------
+        # ---------------------------------------------------------------------
+        # Initialization of the dataset defined in the config of the experiment
+        # ---------------------------------------------------------------------
 
         # Raise Exception if unknown parameters in the config of the scenario
 
@@ -166,9 +164,9 @@ class Scenario:
         self.nb_samples_used = len(self.dataset.x_train)
         self.final_relative_nb_samples = []
 
-    # --------------------------------------
-    #  Definition of collaborative scenarios
-    # --------------------------------------
+        # --------------------------------------
+        #  Definition of collaborative scenarios
+        # --------------------------------------
 
         # Partners mock different partners in a collaborative data science project
         self.partners_list = []  # List of all partners defined in the scenario
@@ -192,9 +190,9 @@ class Scenario:
         else:
             self.corrupted_datasets = ["not_corrupted"] * self.partners_count  # default
 
-    # ---------------------------------------------------
-    #  Configuration of the distributed learning approach
-    # ---------------------------------------------------
+        # ---------------------------------------------------
+        #  Configuration of the distributed learning approach
+        # ---------------------------------------------------
 
         self.mpl = None
 
@@ -244,9 +242,9 @@ class Scenario:
         else:
             self.use_saved_weights = True
 
-    # -----------------------------------------------------------------
-    #  Configuration of contributivity measurement methods to be tested
-    # -----------------------------------------------------------------
+        # -----------------------------------------------------------------
+        #  Configuration of contributivity measurement methods to be tested
+        # -----------------------------------------------------------------
 
         # List of contributivity measures selected and computed in the scenario
         self.contributivity_list = []
@@ -260,14 +258,13 @@ class Scenario:
                 else:
                     raise Exception(f"Contributivity method '{method}' is not in methods list.")
 
-    # -------------
-    # Miscellaneous
-    # -------------
+        # -------------
+        # Miscellaneous
+        # -------------
 
         # Misc.
         self.scenario_id = scenario_id
         self.n_repeat = repeats_count
-        self.is_dry_run = is_dry_run
 
         # The quick demo parameters overwrites previously defined parameters to make the scenario faster to compute
         self.is_quick_demo = is_quick_demo
@@ -301,9 +298,9 @@ class Scenario:
             self.epoch_count = 3
             self.minibatch_count = 2
 
-    # -----------------
-    # Output parameters
-    # -----------------
+        # -----------------
+        # Output parameters
+        # -----------------
 
         now = datetime.datetime.now()
         now_str = now.strftime("%Y-%m-%d_%Hh%M")
@@ -313,40 +310,16 @@ class Scenario:
 
         self.experiment_path = experiment_path
         self.save_folder = self.experiment_path / self.scenario_name
-        if not self.is_dry_run:
-            self.save_folder.mkdir(parents=True, exist_ok=True)
 
-    # -----------------------
-    # Provision the scenario
-    # -----------------------
+        # -----------------------
+        # Provision the scenario
+        # -----------------------
 
         self.instantiate_scenario_partners()
         self.split_data()
         self.compute_batch_sizes()
         self.apply_data_alteration_configuration()
-
-        if self.is_dry_run:
-            logger.info("Scenario instantiated (dry run): "
-                        "save folder not created, description not logged, data distribution not plotted")
-        else:
-            logger.info("Scenario instantiated")
-            self.log_scenario_description()
-            self.plot_data_distribution()
-
-    def convert_from_dry_run_to_run(self):
-        """Convert a dry run scenario to a real scenario"""
-
-        logger.debug(f"Checking if scenario {self.scenario_name} is in dry run mode")
-        if self.is_dry_run:
-            logger.info("It is indeed in dry run mode - removing dry run mode now")
-            self.is_dry_run = False
-            self.save_folder.mkdir(parents=True, exist_ok=True)
-            self.log_scenario_description()
-            self.plot_data_distribution()
-            logger.info("Scenario not in dry run mode anymore, now instantiated entirely "
-                        "(save folder created, description logged, data distribution plotted")
-        else:
-            logger.debug(f"It wasn't in dry run mode - no changes made")
+        self.log_scenario_description()
 
     def log_scenario_description(self):
         """Log the description of the scenario configured"""
@@ -552,7 +525,7 @@ class Scenario:
         ), "Error: in the provided \
             config file and the provided dataset, a partner doesn't have enough data samples to create the minibatches "
 
-        if is_logging_enabled and not self.is_dry_run:
+        if is_logging_enabled:
             logger.info("Splitting data among partners (advanced split):")
             logger.info(f"Nb of samples split amongst partners: {self.nb_samples_used}")
             logger.debug(
@@ -662,7 +635,7 @@ class Scenario:
             p.final_nb_samples / self.nb_samples_used for p in self.partners_list
         ]
 
-        if is_logging_enabled and not self.is_dry_run:
+        if is_logging_enabled:
             logger.info("Splitting data among partners (simple split):")
             logger.info(f"Nb of samples split amongst partners: {self.nb_samples_used}")
             for partner in self.partners_list:
@@ -689,8 +662,7 @@ class Scenario:
         plt.suptitle("Data distribution")
         plt.xlabel("Digits")
 
-        if not os.path.exists(self.save_folder / "graphs/"):
-            os.makedirs(self.save_folder / "graphs/")
+        (self.save_folder / 'graphs').mkdir(parents=True, exist_ok=True)
         plt.savefig(self.save_folder / "graphs/data_distribution.png")
         plt.close()
 
@@ -834,9 +806,7 @@ class Scenario:
         # Preliminary steps
         # -----------------
 
-        if self.is_dry_run:
-            self.convert_from_dry_run_to_run()
-
+        self.plot_data_distribution()
         logger.info(f"Now starting running scenario {self.scenario_name}")
 
         # -----------------------------------------------------
